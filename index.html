@@ -26,32 +26,35 @@
                 <li class="has-dropdown">
                     <a href="#home">홈</a>
                     <div class="dropdown-box">
-                        <p>🔥 이달의 추천</p>
-                        <p>⭐ 평점 높은 맛집</p>
-                        <p>🆕 신규 등록 맛집</p>
-                        <p>🎁 이벤트 / 혜택</p>
+                        <p onclick="openMonthlyRecommend()">🔥 이달의 추천</p>
+                        <p onclick="openTopRated()">⭐ 평점 높은 맛집</p>
+                        <p onclick="openNewRestaurants()">🆕 신규 등록 맛집</p>
+                        <p onclick="openEvents()">🎁 이벤트 / 혜택</p>
                     </div>
                 </li>
 
+
                 <!-- 맛집 찾기 -->
                 <li class="has-dropdown">
-                    <a href="#restaurants">맛집 찾기</a>
+                    <a href="#">맛집 찾기</a>
                     <div class="dropdown-box">
-                        <p onclick="filterByCategory('한식')">🍚 한식</p>
-                        <p onclick="filterByCategory('중식')">🥟 중식</p>
-                        <p onclick="filterByCategory('일식')">🍣 일식</p>
-                        <p onclick="filterByCategory('카페')">☕ 카페</p>
+                        <p onclick="openCategorySearch('한식')">🍚 한식</p>
+                        <p onclick="openCategorySearch('중식')">🥟 중식</p>
+                        <p onclick="openCategorySearch('일식')">🍣 일식</p>
+                        <p onclick="openCategorySearch('카페/디저트')">☕ 카페</p>
+                        <p onclick="openAllRestaurants()">📍 전체 맛집</p>
                     </div>
                 </li>
+
 
                 <!-- 맛집 추천하기 -->
                 <li class="has-dropdown">
                     <a href="#">맛집 추천하기</a>
                     <div class="dropdown-box">
                         <p onclick="openModal('recommendModal')">✍️ 맛집 추천 등록</p>
-                        <p>📝 추천 가이드</p>
-                        <p>🎁 포인트 혜택 안내</p>
-                        <p>📊 추천 진행 상태</p>
+                        <p onclick="openRecommendGuide()">📝 추천 가이드</p>
+                        <p onclick="openPointGuide()">🎁 포인트 혜택 안내</p>
+                        <p onclick="openRecommendStatus()">📊 추천 진행 상태</p>
                     </div>
                 </li>
 
@@ -226,12 +229,98 @@
     <!-- 맛집 상세 모달 -->
     <div id="detailModal" class="modal">
         <div class="modal-content modal-large">
-            <span class="modal-close" onclick="closeModal('detailModal')">&times;</span>
+            <span class="modal-close" onclick="closeDetailWithBack()">&times;</span>
             <div id="detailContent">
                 <!-- JavaScript로 동적 생성 -->
             </div>
         </div>
     </div>
+    <!-- 🔥 이달의 추천 -->
+    <div class="modal" id="homeMonthlyModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('homeMonthlyModal')">&times;</span>
+            <h2>🔥 이달의 추천</h2>
+            <div id="monthlyList"></div>
+        </div>
+    </div>
+
+    <!-- ⭐ 평점 높은 맛집 -->
+    <div class="modal" id="homeTopRatedModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('homeTopRatedModal')">&times;</span>
+            <h2>⭐ 평점 높은 맛집</h2>
+            <div id="topRatedList"></div>
+        </div>
+    </div>
+
+    <!-- 🆕 신규 등록 맛집 -->
+    <div class="modal" id="homeNewModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('homeNewModal')">&times;</span>
+            <h2>🆕 신규 등록 맛집</h2>
+            <div id="newRestaurantList"></div>
+        </div>
+    </div>
+
+    <!-- 🎁 이벤트 / 혜택 -->
+    <div class="modal" id="homeEventModal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('homeEventModal')">&times;</span>
+            <h2>🎁 이벤트 / 혜택</h2>
+            <ul class="event-list">
+                <li>🎉 신규 가입 시 1,000P 지급</li>
+                <li>🍽️ 맛집 추천 승인 시 500P</li>
+                <li>💸 맛보기 신청 10% 할인</li>
+            </ul>
+        </div>
+    </div>
+    <!-- 맛집 찾기 모달 -->
+    <div class="modal" id="searchModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('searchModal')">&times;</span>
+            <h2 id="searchModalTitle">맛집 찾기</h2>
+            <div id="searchResultList" class="restaurant-grid"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="recommendGuideModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('recommendGuideModal')">&times;</span>
+            <h2>📝 맛집 추천 가이드</h2>
+            <ul style="line-height:1.8; color:#555;">
+                <li>✔ 직접 방문한 맛집만 추천 가능</li>
+                <li>✔ 프랜차이즈보다 동네 숨은 맛집 우대</li>
+                <li>✔ 음식 사진, 메뉴 정보가 상세할수록 승인 확률 ↑</li>
+                <li>❌ 허위 정보 / 광고성 추천은 반려 처리</li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal" id="pointGuideModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('pointGuideModal')">&times;</span>
+            <h2>🎁 포인트 혜택 안내</h2>
+            <ul style="line-height:1.8; color:#555;">
+                <li>🍽️ 맛집 추천 승인 시 <strong>500P 지급</strong></li>
+                <li>✍️ 리뷰 작성 시 <strong>100P 지급</strong></li>
+                <li>🥄 맛보기 신청 시 <strong>100P 사용</strong></li>
+                <li>🎁 포인트는 현금 환불 불가</li>
+            </ul>
+        </div>
+    </div>
+    <div class="modal" id="recommendStatusModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('recommendStatusModal')">&times;</span>
+            <h2>📊 추천 진행 상태</h2>
+            <ul style="line-height:1.8;">
+                <li>📩 접수 완료 → <span style="color:orange;">검증 대기</span></li>
+                <li>🔍 평가원 방문 및 검토 (3~5일)</li>
+                <li>✅ 승인 → 포인트 지급</li>
+                <li>❌ 반려 → 사유 안내</li>
+            </ul>
+        </div>
+    </div>
+
+
 
     <script src="js/data.js"></script>
     <script src="js/auth.js"></script>
