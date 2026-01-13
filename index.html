@@ -21,11 +21,53 @@
             </div>
 
             <ul class="nav-menu" id="nav-menu">
-                <li><a href="#home">홈</a></li>
-                <li><a href="#restaurants">맛집 찾기</a></li>
-                <li><a href="#" onclick="openModal('recommendModal')">맛집 추천하기</a></li>
-                <li><a href="mypage.html">마이페이지</a></li>
+
+                <!-- 홈 -->
+                <li class="has-dropdown">
+                    <a href="#home">홈</a>
+                    <div class="dropdown-box">
+                        <p>🔥 이달의 추천</p>
+                        <p>⭐ 평점 높은 맛집</p>
+                        <p>🆕 신규 등록 맛집</p>
+                        <p>🎁 이벤트 / 혜택</p>
+                    </div>
+                </li>
+
+                <!-- 맛집 찾기 -->
+                <li class="has-dropdown">
+                    <a href="#restaurants">맛집 찾기</a>
+                    <div class="dropdown-box">
+                        <p onclick="filterByCategory('한식')">🍚 한식</p>
+                        <p onclick="filterByCategory('중식')">🥟 중식</p>
+                        <p onclick="filterByCategory('일식')">🍣 일식</p>
+                        <p onclick="filterByCategory('카페')">☕ 카페</p>
+                    </div>
+                </li>
+
+                <!-- 맛집 추천하기 -->
+                <li class="has-dropdown">
+                    <a href="#">맛집 추천하기</a>
+                    <div class="dropdown-box">
+                        <p onclick="openModal('recommendModal')">✍️ 맛집 추천 등록</p>
+                        <p>📝 추천 가이드</p>
+                        <p>🎁 포인트 혜택 안내</p>
+                        <p>📊 추천 진행 상태</p>
+                    </div>
+                </li>
+
+                <!-- 마이페이지 -->
+                <li class="has-dropdown">
+                    <a href="mypage.html">마이페이지</a>
+                    <div class="dropdown-box">
+                        <p>❤️ 찜한 맛집</p>
+                        <p>📝 내가 쓴 리뷰</p>
+                        <p>🏅 포인트 내역</p>
+                        <p>⚙️ 회원정보 수정</p>
+                    </div>
+                </li>
+
             </ul>
+
 
             <div class="user-info" id="user-info">
                 <a href="login.html">로그인</a>
