@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 울산의 숨은 맛집</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            padding: 50px 40px;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo-section i {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .logo-section h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .logo-section p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+
+        .remember-me input {
+            cursor: pointer;
+        }
+
+        .find-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .find-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .signup-link {
+            text-align: center;
+            color: #666;
+            font-size: 0.95rem;
+            margin-top: 30px;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 40px 30px;
+            }
+
+            .logo-section h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-section">
+            <i class="fas fa-map-marker-alt"></i>
+            <h1>울산의 숨은 맛집🐳</h1>
+            <p>검증된 맛집으로 안내합니다</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="userEmail">이메일</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="userEmail" placeholder="example@email.com" required>
+                </div>
+                <div class="error-message" id="emailError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="userPw">비밀번호</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="userPw" placeholder="비밀번호를 입력하세요" required>
+                </div>
+                <div class="error-message" id="pwError"></div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <span>로그인 상태 유지</span>
+                </label>
+                <a class="find-link" id="resetPasswordLink">
+                    비밀번호 찾기
+                </a>
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">로그인</button>
+        </form>
+
+        <div class="signup-link">
+            아직 회원이 아니신가요? 
+            <a href="signup.html">회원가입하고 3,000P 받기</a>
+        </div>
+
+        <div class="back-home">
+            <a href="index.html">
+                <i class="fas fa-arrow-left"></i>
+                홈으로 돌아가기
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Realtime Database URL (여기에 본인의 Firebase URL을 입력하세요)
+        const FIREBASE_DB_URL = 'https://ulsan-restaurant-default-rtdb.firebaseio.com';
+
+        // 이메일을 사용자 ID로 변환
+        function generateUserId(email) {
+            return email.replace(/[.@]/g, '_');
+        }
+
+        // 이메일 유효성 검사
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // 사용자 데이터 조회
+        async function getUserData(userId) {
+            try {
+                const response = await fetch(`${FIREBASE_DB_URL}/users/${userId}.json`);
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('사용자 데이터 조회 에러:', error);
+                return null;
+            }
+        }
+
+        // 로그인 상태 저장 (세션/로컬 스토리지 대신 변수 사용)
+        let currentUser = null;
+
+        // 로그인 폼 제출
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('userEmail').value.trim();
+            const password = document.getElementById('userPw').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // 에러 메시지 초기화
+            document.getElementById('emailError').classList.remove('show');
+            document.getElementById('pwError').classList.remove('show');
+            
+            // 유효성 검사
+            if (!validateEmail(email)) {
+                document.getElementById('emailError').textContent = '올바른 이메일 형식이 아닙니다.';
+                document.getElementById('emailError').classList.add('show');
+                return;
+            }
+            
+            // 버튼 비활성화
+            loginBtn.disabled = true;
+            loginBtn.textContent = '로그인 중...';
+            
+            try {
+                // 사용자 ID 생성
+                const userId = generateUserId(email);
+                
+                // Firebase에서 사용자 데이터 조회
+                const userData = await getUserData(userId);
+                
+                if (!userData) {
+                    document.getElementById('emailError').textContent = '등록되지 않은 이메일입니다.';
+                    document.getElementById('emailError').classList.add('show');
+                    return;
+                }
+                
+                // 비밀번호 확인
+                if (userData.password !== password) {
+                    document.getElementById('pwError').textContent = '비밀번호가 틀렸습니다.';
+                    document.getElementById('pwError').classList.add('show');
+                    return;
+                }
+                
+                // 로그인 성공
+                currentUser = {
+                    userId: userId,
+                    name: userData.name,
+                    email: userData.email,
+                    points: userData.points,
+                    role: userData.role
+                };
+                
+                // 로그인 정보를 localStorage에 저장
+                localStorage.setItem('loggedInUser', JSON.stringify(currentUser));
+
+                // 로그인 상태 유지 옵션 처리
+                if (rememberMe) {
+                    // 실제 서비스에서는 쿠키나 토큰 사용
+                    console.log('로그인 상태 유지 활성화');
+                }
+                
+                alert(`환영합니다, ${userData.name}님!\n로그인 성공!`);
+                
+                // 메인 페이지로 이동
+                window.location.href = 'index.html';
+                
+            } catch (error) {
+                console.error('로그인 에러:', error);
+                alert('로그인에 실패했습니다. 다시 시도해주세요.');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '로그인';
+            }
+        });
+
+        // 비밀번호 찾기
+        document.getElementById('resetPasswordLink').addEventListener('click', async () => {
+            const email = document.getElementById('userEmail').value.trim();
+            
+            if (!email) {
+                alert('이메일을 입력해주세요.');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                alert('올바른 이메일 형식이 아닙니다.');
+                return;
+            }
+            
+            try {
+                const userId = generateUserId(email);
+                const userData = await getUserData(userId);
+                
+                if (!userData) {
+                    alert('등록되지 않은 이메일입니다.');
+                    return;
+                }
+                
+                // 실제 서비스에서는 이메일로 임시 비밀번호를 전송해야 합니다
+                // 여기서는 데모용으로 alert로 표시
+                alert(`${userData.name}님의 비밀번호 찾기\n\n실제 서비스에서는 이메일로 비밀번호 재설정 링크가 전송됩니다.\n\n[데모용 정보]\n현재 비밀번호: ${userData.password}`);
+                
+            } catch (error) {
+                console.error('비밀번호 찾기 에러:', error);
+                alert('비밀번호 찾기에 실패했습니다. 다시 시도해주세요.');
+            }
+        });
+    </script>
+</body>
+</html>
