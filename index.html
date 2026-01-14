@@ -6,7 +6,7 @@
     <title>🍽️ 울산의 숨은 맛집</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-</head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff" as="font" type="font/woff" crossorigin></head>
 <body>
     <!-- 헤더 -->
     <header class="header">
@@ -60,12 +60,12 @@
 
                 <!-- 마이페이지 -->
                 <li class="has-dropdown">
-                    <a href="mypage.html">마이페이지</a>
+                    <a href="#mypage">마이페이지</a>
                     <div class="dropdown-box">
-                        <p>❤️ 찜한 맛집</p>
-                        <p>📝 내가 쓴 리뷰</p>
-                        <p>🏅 포인트 내역</p>
-                        <p>⚙️ 회원정보 수정</p>
+                        <p onclick="openFavoriteRestaurants()">❤️ 찜한 맛집</p>
+                        <p onclick="openMyReviews()">📝 내가 쓴 리뷰</p>
+                        <p onclick="openPointHistory()">🏅 포인트 내역</p>
+                        <p onclick="openProfileEdit()">⚙️ 회원정보 수정</p>
                     </div>
                 </li>
 
@@ -79,10 +79,11 @@
             </div>
         </div>
     </header>
+    
 
     <!-- 히어로 섹션 -->
     <section class="hero">
-        <div class="hero-logo">🐋</div>
+        <img src="./images/ulsan_whale(2).png" alt="고래 로고" class="hero-logo-img">
         <h1>🍽️ 울산의 숨은 맛집</h1>
         <p>검증된 평가원이 직접 방문하여 인증한 울산의 숨은 명소</p>
         <div class="search-box">
@@ -225,6 +226,14 @@
             </form>
         </div>
     </div>
+    <!-- 🔍 검색 결과 모달 -->
+    <div class="modal" id="searchResultModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('searchResultModal')">&times;</span>
+            <h2 id="searchResultTitle">검색 결과</h2>
+            <div id="searchResultGrid" class="restaurant-grid"></div>
+        </div>
+    </div>
 
     <!-- 맛집 상세 모달 -->
     <div id="detailModal" class="modal">
@@ -319,7 +328,55 @@
             </ul>
         </div>
     </div>
+    <!-- ❤️ 찜한 맛집 모달 -->
+    <div class="modal" id="favoriteModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('favoriteModal')">&times;</span>
+            <h2>❤️ 찜한 맛집</h2>
+            <div id="favoriteList" class="restaurant-grid"></div>
+        </div>
+    </div>
 
+    <!-- 📝 내가 쓴 리뷰 모달 -->
+    <div class="modal" id="myReviewsModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('myReviewsModal')">&times;</span>
+            <h2>📝 내가 쓴 리뷰</h2>
+            <div id="myReviewsList"></div>
+        </div>
+    </div>
+
+    <!-- 🏅 포인트 내역 모달 -->
+    <div class="modal" id="pointHistoryModal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeModal('pointHistoryModal')">&times;</span>
+            <h2>🏅 포인트 내역</h2>
+            <div id="pointHistoryList"></div>
+        </div>
+    </div>
+
+    <!-- ⚙️ 회원정보 수정 모달 -->
+    <div class="modal" id="profileEditModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('profileEditModal')">&times;</span>
+            <h2>⚙️ 회원정보 수정</h2>
+            <form id="profileEditForm">
+                <div class="form-group">
+                    <label>이름</label>
+                    <input type="text" id="editName" placeholder="이름을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="email" id="editEmail" placeholder="이메일을 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label>전화번호</label>
+                    <input type="tel" id="editPhone" placeholder="전화번호를 입력하세요">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">수정하기</button>
+            </form>
+        </div>
+    </div>
 
 
     <script src="js/data.js"></script>
