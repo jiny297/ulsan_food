@@ -198,4 +198,19 @@ function getStats() {
         totalReviews: restaurants.reduce((sum, r) => sum + r.reviews, 0),
         averageRating: (restaurants.reduce((sum, r) => sum + r.rating, 0) / restaurants.length).toFixed(1)
     };
+
+}
+
+// ===== 유틸: 날짜·시간 문자열 =====
+function getDateTimeText() {
+    const now = new Date();
+
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+
+    return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
 }
