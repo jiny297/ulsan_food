@@ -1,11 +1,8 @@
-// 메인 JavaScript 파일
-
 // 전역 변수
 let currentFilter = 'all';
 let currentRestaurants = [];
 let lastSearchModal = null;
 let previousModal = null;
-
 
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
@@ -76,8 +73,8 @@ function createRestaurantCard(restaurant) {
     `;
     
     card.addEventListener('click', () => {
-        closeModal('searchModal');       // 🔴 한식/검색 창 닫기
-        showRestaurantDetail(restaurant); // 🔵 상세 페이지 열기
+        closeModal('searchModal');
+        showRestaurantDetail(restaurant);
     });
     return card;
 }
@@ -162,27 +159,48 @@ function setupSearch() {
 }
 
 function performSearch() {
-    const searchInput = document.getElementById('searchInput');
-    if (!searchInput) return;
-    
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    
-    if (searchTerm === '') {
-        displayRestaurants(restaurants);
-        currentRestaurants = [...restaurants];
-        return;
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+
+    const keyword = input.value.trim().toLowerCase();
+    if (!keyword) return;
+
+    const results = restaurants.filter(r =>
+        r.name.toLowerCase().includes(keyword) ||
+        r.category.toLowerCase().includes(keyword) ||
+        r.address.toLowerCase().includes(keyword) ||
+        r.description.toLowerCase().includes(keyword)
+    );
+
+    const title = document.getElementById('searchResultTitle');
+    const grid = document.getElementById('searchResultGrid');
+
+    if (!title || !grid) return;
+
+    title.textContent = `🔍 "${input.value}" 검색 결과`;
+    grid.innerHTML = '';
+
+    lastSearchModal = 'searchResultModal';
+
+    if (results.length === 0) {
+        grid.innerHTML = `
+            <div style="
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 40px;
+                color: #777;
+            ">
+                검색 결과가 없습니다 😥
+            </div>
+        `;
+    } else {
+        results.forEach(r => {
+            const card = createRestaurantCard(r);
+            grid.appendChild(card);
+        });
     }
-    
-    const filtered = restaurants.filter(restaurant => {
-        return restaurant.name.toLowerCase().includes(searchTerm) ||
-               restaurant.category.toLowerCase().includes(searchTerm) ||
-               restaurant.location.toLowerCase().includes(searchTerm) ||
-               restaurant.description.toLowerCase().includes(searchTerm);
-    });
-    
-    currentRestaurants = filtered;
-    displayRestaurants(filtered);
-    scrollToSection('restaurants');
+
+    openModal('searchResultModal');
 }
 
 // 카테고리 필터
@@ -211,7 +229,7 @@ function setupEventListeners() {
     }
 }
 
-// 맛집 추천 제출
+// ===== Firebase 연동 맛집 추천 제출 =====
 function handleRecommendSubmit(e) {
     e.preventDefault();
     
@@ -223,21 +241,42 @@ function handleRecommendSubmit(e) {
     const storeLocation = document.getElementById('storeLocation').value;
     const storeReason = document.getElementById('storeReason').value;
     
-    // 데이터 저장 (실제로는 서버로 전송)
-    console.log('맛집 추천:', {
-        name: storeName,
+    // 로그인한 사용자 정보 가져오기
+    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const userName = loggedInUser?.name || '익명';
+    const nowTimestamp = Date.now();
+    
+    // Firebase에 저장할 데이터 구조
+    const recommendationData = {
+        storeName: storeName,
         category: storeCategory,
         location: storeLocation,
-        reason: storeReason
-    });
+        reason: storeReason,
+        createdAtText: getDateTimeText(),
+        userId: loggedInUser?.email || 'anonymous',
+        status: '검증 대기'
+    };
     
-    // 포인트 적립
-    addPoints(500);
+    // Firebase Realtime Database 경로: recommendations/{카테고리}/{사용자이름}/{타임스탬프}
+    const recommendRef = database.ref(`recommendations/${storeCategory}/${userName}/${nowTimestamp}`);
     
-    alert('맛집 추천이 접수되었습니다!\n평가원 검증 후 승인되면 500P가 적립됩니다.\n평균 검증 기간은 3~5일입니다.');
-    
-    closeModal('recommendModal');
-    document.getElementById('recommendForm').reset();
+    // Firebase에 데이터 저장
+    recommendRef.set(recommendationData)
+        .then(() => {
+            console.log('Firebase에 맛집 추천 저장 성공:', recommendationData);
+            
+            // 포인트 적립
+            addPoints(500);
+            
+            alert('맛집 추천이 접수되었습니다!\n평가원 검증 후 승인되면 500P가 적립됩니다.\n평균 검증 기간은 3~5일입니다.');
+            
+            closeModal('recommendModal');
+            document.getElementById('recommendForm').reset();
+        })
+        .catch((error) => {
+            console.error('Firebase 저장 실패:', error);
+            alert('추천 등록 중 오류가 발생했습니다.\n다시 시도해주세요.');
+        });
 }
 
 // 맛보기 신청
@@ -260,7 +299,6 @@ function openNavigation(address) {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-        // 모바일: 카카오맵 또는 네이버 지도 앱 실행
         const kakaoUrl = `kakaomap://search?q=${encodeURIComponent(address)}`;
         const naverUrl = `nmap://search?query=${encodeURIComponent(address)}`;
         
@@ -270,7 +308,6 @@ function openNavigation(address) {
             window.location.href = naverUrl;
         }
     } else {
-        // PC: 구글 맵 열기
         window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
     }
 }
@@ -278,14 +315,12 @@ function openNavigation(address) {
 // 회원가입 페이지 이동
 function goToSignup() {
     alert('회원가입 페이지로 이동합니다!');
-    // window.location.href = 'signup.html';
 }
 
 // 모달 관련 함수
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
 
-    // 현재 열려 있는 모달 기억
     const activeModal = document.querySelector('.modal.active');
     if (activeModal && modalId === 'detailModal') {
         previousModal = activeModal.id;
@@ -303,7 +338,6 @@ function closeModal(modalId) {
 
     modal.classList.remove('active');
 
-    // 상세페이지 닫을 때 이전 모달로 복귀
     if (modalId === 'detailModal' && previousModal) {
         const prev = document.getElementById(previousModal);
         if (prev) {
@@ -313,7 +347,6 @@ function closeModal(modalId) {
     }
 }
 
-
 function goBackFromDetail() {
     closeModal('detailModal');
 
@@ -321,7 +354,6 @@ function goBackFromDetail() {
         openModal(lastOpenedModal);
     }
 }
-
 
 // 모달 외부 클릭 시 닫기
 window.onclick = function(event) {
@@ -358,27 +390,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-//드롭다운 구성 창 정보
-function openMonthlyRecommend() {
-    // 평점 + 리뷰 기준으로 상위 4개 추출
-    const topRestaurants = [...restaurants]
-        .sort((a, b) => b.rating - a.rating || b.reviews - a.reviews)
-        .slice(0, 4);
-
-    const container = document.getElementById('monthlyRestaurantList');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    topRestaurants.forEach(r => {
-        const card = createRestaurantCard(r);
-        container.appendChild(card);
-    });
-
-    openModal('homeMonthlyModal');
-}
-
-// 🔥 이달의 추천 (리뷰 많은 순)
+// 홈 드롭다운 메뉴 함수들
 function openMonthlyRecommend() {
     const list = document.getElementById('monthlyList');
     const sorted = [...restaurants]
@@ -392,7 +404,6 @@ function openMonthlyRecommend() {
     openModal('homeMonthlyModal');
 }
 
-// ⭐ 평점 높은 맛집 (4.8 이상)
 function openTopRated() {
     const list = document.getElementById('topRatedList');
     const filtered = restaurants.filter(r => r.rating >= 4.8);
@@ -404,7 +415,6 @@ function openTopRated() {
     openModal('homeTopRatedModal');
 }
 
-// 🆕 신규 등록 맛집 (ID 최신순)
 function openNewRestaurants() {
     const list = document.getElementById('newRestaurantList');
     const sorted = [...restaurants]
@@ -418,13 +428,13 @@ function openNewRestaurants() {
     openModal('homeNewModal');
 }
 
-// 🎁 이벤트 / 혜택
 function openEvents() {
     openModal('homeEventModal');
 }
-// 맛집 찾기 > 카테고리별
+
+// 맛집 찾기 메뉴 함수들
 function openCategorySearch(category) {
-    lastSearchModal = 'searchModal'; // ⭐ 기억
+    lastSearchModal = 'searchModal';
 
     const filtered = restaurants.filter(r => r.category === category);
 
@@ -437,20 +447,20 @@ function openCategorySearch(category) {
     container.innerHTML = '';
 
     if (filtered.length === 0) {
-            container.innerHTML = `
-                <div style="
-                    grid-column: 1 / -1;
-                    text-align: center;
-                    padding: 40px 0;
-                    color: #777;
-                    font-size: 15px;
-                ">
-                    아직 등록된 <strong>${category}</strong> 맛집이 없습니다 🍽️<br>
-                    <span style="font-size:13px; color:#aaa;">
-                        맛집 추천하기에서 첫 번째로 추천해보세요!
-                    </span>
-                </div>
-            `;
+        container.innerHTML = `
+            <div style="
+                grid-column: 1 / -1;
+                text-align: center;
+                padding: 40px 0;
+                color: #777;
+                font-size: 15px;
+            ">
+                아직 등록된 <strong>${category}</strong> 맛집이 없습니다 🍽️<br>
+                <span style="font-size:13px; color:#aaa;">
+                    맛집 추천하기에서 첫 번째로 추천해보세요!
+                </span>
+            </div>
+        `;
     } else {
         filtered.forEach(r => {
             const card = createRestaurantCard(r);
@@ -461,9 +471,8 @@ function openCategorySearch(category) {
     openModal('searchModal');
 }
 
-// 맛집 찾기 > 전체 맛집
 function openAllRestaurants() {
-    lastSearchModal = 'searchModal'; // ⭐ 기억
+    lastSearchModal = 'searchModal';
 
     const title = document.getElementById('searchModalTitle');
     const container = document.getElementById('searchResultList');
@@ -485,19 +494,31 @@ function closeDetailWithBack() {
     closeModal('detailModal');
 
     if (lastSearchModal) {
-        openModal(lastSearchModal); // 🔥 다시 목록 열기
+        openModal(lastSearchModal);
     }
 }
-// ========== 마이페이지 관련 함수 ==========
 
-// ❤️ 찜한 맛집
+// 맛집 추천하기 메뉴 함수들
+function openRecommendGuide() {
+    openModal('recommendGuideModal');
+}
+
+function openPointGuide() {
+    openModal('pointGuideModal');
+}
+
+function openRecommendStatus() {
+    if (!requireLogin()) return;
+    openModal('recommendStatusModal');
+}
+
+// 마이페이지 함수들
 function openFavoriteRestaurants() {
     if (!requireLogin()) return;
 
     const container = document.getElementById('favoriteList');
     if (!container) return;
 
-    // localStorage에서 찜한 맛집 ID 가져오기
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     
     if (favorites.length === 0) {
@@ -527,14 +548,12 @@ function openFavoriteRestaurants() {
     openModal('favoriteModal');
 }
 
-// 📝 내가 쓴 리뷰
 function openMyReviews() {
     if (!requireLogin()) return;
 
     const list = document.getElementById('myReviewsList');
     if (!list) return;
 
-    // localStorage에서 내 리뷰 가져오기
     const myReviews = JSON.parse(localStorage.getItem('myReviews') || '[]');
 
     if (myReviews.length === 0) {
@@ -587,7 +606,6 @@ function openMyReviews() {
     openModal('myReviewsModal');
 }
 
-// 🏅 포인트 내역
 function openPointHistory() {
     if (!requireLogin()) return;
 
@@ -597,7 +615,6 @@ function openPointHistory() {
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
     const currentPoints = loggedInUser?.points || 0;
 
-    // localStorage에서 포인트 내역 가져오기
     const pointHistory = JSON.parse(localStorage.getItem('pointHistory') || '[]');
 
     list.innerHTML = `
@@ -660,13 +677,11 @@ function openPointHistory() {
     openModal('pointHistoryModal');
 }
 
-// ⚙️ 회원정보 수정
 function openProfileEdit() {
     if (!requireLogin()) return;
 
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
     
-    // 현재 정보로 폼 채우기
     document.getElementById('editName').value = loggedInUser.name || '';
     document.getElementById('editEmail').value = loggedInUser.email || '';
     document.getElementById('editPhone').value = loggedInUser.phone || '';
@@ -692,7 +707,6 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('회원정보가 수정되었습니다!');
             closeModal('profileEditModal');
             
-            // 헤더의 사용자 정보도 업데이트
             updateUserInfo();
         });
     }
@@ -706,69 +720,6 @@ function deleteReview(index) {
         localStorage.setItem('myReviews', JSON.stringify(myReviews));
         
         alert('리뷰가 삭제되었습니다.');
-        openMyReviews(); // 새로고침
+        openMyReviews();
     }
-}
-
-function performSearch() {
-    const input = document.getElementById('searchInput');
-    if (!input) return;
-
-    const keyword = input.value.trim().toLowerCase();
-    if (!keyword) return;
-
-    const results = restaurants.filter(r =>
-        r.name.toLowerCase().includes(keyword) ||
-        r.category.toLowerCase().includes(keyword) ||
-        r.address.toLowerCase().includes(keyword) ||
-        r.description.toLowerCase().includes(keyword)
-    );
-
-    const title = document.getElementById('searchResultTitle');
-    const grid = document.getElementById('searchResultGrid');
-
-    if (!title || !grid) return;
-
-    title.textContent = `🔍 "${input.value}" 검색 결과`;
-    grid.innerHTML = '';
-
-    lastSearchModal = 'searchResultModal'; // 🔥 뒤로가기용
-
-    if (results.length === 0) {
-        grid.innerHTML = `
-            <div style="
-                grid-column: 1 / -1;
-                text-align: center;
-                padding: 40px;
-                color: #777;
-            ">
-                검색 결과가 없습니다 😥
-            </div>
-        `;
-    } else {
-        results.forEach(r => {
-            const card = createRestaurantCard(r);
-            grid.appendChild(card);
-        });
-    }
-
-    openModal('searchResultModal');
-}
-
-
-function openRecommendGuide() {
-    openModal('recommendGuideModal');
-}
-
-function openPointGuide() {
-    openModal('pointGuideModal');
-}
-
-function openRecommendStatus() {
-    if (!requireLogin()) return;
-    openModal('recommendStatusModal');
-}
-
-function openRecommendFAQ() {
-    openModal('recommendFAQModal');
 }
