@@ -6,7 +6,8 @@
     <title>🍽️ 울산의 숨은 맛집</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff" as="font" type="font/woff" crossorigin></head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff" as="font" type="font/woff" crossorigin>
+</head>
 <body>
     <!-- 헤더 -->
     <header class="header">
@@ -226,6 +227,7 @@
             </form>
         </div>
     </div>
+
     <!-- 🔍 검색 결과 모달 -->
     <div class="modal" id="searchResultModal">
         <div class="modal-content modal-large">
@@ -244,6 +246,7 @@
             </div>
         </div>
     </div>
+
     <!-- 🔥 이달의 추천 -->
     <div class="modal" id="homeMonthlyModal">
         <div class="modal-content">
@@ -283,6 +286,7 @@
             </ul>
         </div>
     </div>
+
     <!-- 맛집 찾기 모달 -->
     <div class="modal" id="searchModal">
         <div class="modal-content modal-large">
@@ -304,6 +308,7 @@
             </ul>
         </div>
     </div>
+
     <div class="modal" id="pointGuideModal">
         <div class="modal-content modal-large">
             <span class="modal-close" onclick="closeModal('pointGuideModal')">&times;</span>
@@ -316,6 +321,7 @@
             </ul>
         </div>
     </div>
+
     <div class="modal" id="recommendStatusModal">
         <div class="modal-content modal-large">
             <span class="modal-close" onclick="closeModal('recommendStatusModal')">&times;</span>
@@ -328,6 +334,7 @@
             </ul>
         </div>
     </div>
+
     <!-- ❤️ 찜한 맛집 모달 -->
     <div class="modal" id="favoriteModal">
         <div class="modal-content modal-large">
@@ -378,9 +385,17 @@
         </div>
     </div>
 
-
-    <script src="js/data.js"></script>
+    <!-- Firebase SDK 추가 -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
+    <!-- Firebase 설정 -->
+    <script src="js/firebase-config.js"></script>
+    
+    
+    <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/data.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
