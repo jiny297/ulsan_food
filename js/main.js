@@ -265,8 +265,11 @@ function handleRecommendSubmit(e) {
         .then(() => {
             console.log('Firebase에 맛집 추천 저장 성공:', recommendationData);
             
-            // 포인트 적립
-            addPoints(500);
+            database.ref('users/test_gmail_com/points')
+                .transaction(current => {
+                    return (current || 0) + 500;
+                });
+
             
             alert('맛집 추천이 접수되었습니다!\n평가원 검증 후 승인되면 500P가 적립됩니다.\n평균 검증 기간은 3~5일입니다.');
             
