@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🍽️ 울산맛탐정</title>
+    <title>🍽️ 울산의 숨은 맛집</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff" as="font" type="font/woff" crossorigin>
@@ -14,7 +14,7 @@
         <div class="nav-container">
             <div class="logo">
                 <i class="fas fa-map-marker-alt"></i>
-                울산맛탐정정 🐳
+                울산의 숨은 맛집 🐳
             </div>
 
             <div class="hamburger" onclick="toggleMenu()">
@@ -85,7 +85,7 @@
     <!-- 히어로 섹션 -->
     <section class="hero">
         <img src="./images/ulsan_whale(2).png" alt="고래 로고" class="hero-logo-img">
-        <h1>🍽️ 울산맛탐정</h1>
+        <h1>🍽️ 울산의 숨은 맛집</h1>
         <p>검증된 평가원이 직접 방문하여 인증한 울산의 숨은 명소</p>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="음식 종류, 지역, 맛집 이름으로 검색해보세요">
@@ -215,7 +215,12 @@
                 
                 <div class="form-group">
                     <label>위치 *</label>
-                    <input type="text" id="storeLocation" placeholder="예: 울산광역시 중구 번영로 123" required>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="storeLocation" placeholder="예: 울산광역시 중구 번영로 123" required style="flex: 1;">
+                        <button type="button" class="btn btn-secondary" onclick="openMapModal()" style="white-space: nowrap; padding: 0 15px;">
+                            <i class="fas fa-map-marker-alt"></i> 지도에서 선택
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -225,6 +230,65 @@
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">추천하기</button>
             </form>
+        </div>
+    </div>
+
+    <!-- 🗺️ 카카오맵 위치 선택 모달 -->
+    <div id="mapSelectModal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="modal-close" onclick="closeMapModal()">&times;</span>
+            <h2 style="margin-bottom: 20px; color: #667eea;">📍 지도에서 위치 선택</h2>
+            
+            <!-- 주소 검색 -->
+            <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                <input 
+                    type="text" 
+                    id="mapSearchInput" 
+                    placeholder="주소를 입력하세요 (예: 울산광역시 남구 삼산로)" 
+                    style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"
+                >
+                <button 
+                    id="mapSearchBtn" 
+                    class="btn btn-secondary" 
+                    style="white-space: nowrap;"
+                >
+                    <i class="fas fa-search"></i> 검색
+                </button>
+                <button 
+                    id="currentLocationBtn" 
+                    class="btn btn-secondary" 
+                    style="white-space: nowrap;"
+                >
+                    <i class="fas fa-crosshairs"></i> 내 위치
+                </button>
+            </div>
+
+            <!-- 지도 영역 -->
+            <div id="kakaoMap" style="width: 100%; height: 400px; border-radius: 10px; margin-bottom: 15px;"></div>
+
+            <!-- 선택된 주소 표시 -->
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="font-size: 13px; color: #666; margin-bottom: 5px;">선택된 주소:</div>
+                <div id="selectedMapAddress" style="font-size: 16px; font-weight: bold; color: #333;">
+                    지도를 클릭하여 위치를 선택하세요
+                </div>
+                <input type="hidden" id="hiddenMapAddress" value="">
+            </div>
+
+            <!-- 안내 문구 -->
+            <div style="background: #e3f2fd; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; color: #1976d2;">
+                <i class="fas fa-info-circle"></i> 지도를 클릭하면 해당 위치의 주소가 자동으로 입력됩니다
+            </div>
+
+            <!-- 확인 버튼 -->
+            <div style="display: flex; gap: 10px;">
+                <button onclick="confirmMapAddress()" class="btn btn-primary" style="flex: 1;">
+                    <i class="fas fa-check"></i> 이 위치로 선택
+                </button>
+                <button onclick="closeMapModal()" class="btn" style="flex: 1; background: #e0e0e0;">
+                    취소
+                </button>
+            </div>
         </div>
     </div>
 
@@ -392,11 +456,10 @@
     <!-- Firebase 설정 -->
     <script src="js/firebase-config.js"></script>
     
-    
+    <!-- JavaScript 파일들 -->
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/data.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
-
